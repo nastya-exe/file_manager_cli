@@ -98,7 +98,7 @@ if args.option =='analyse':
 # python functions.py date, folder1
 # python functions.py date, main_folder
 # python functions.py date, file4.txt
-# python functions.py date, main_folder
+
 
 # python functions.py copy, file4.txt
 # python functions.py delete, file2.txt

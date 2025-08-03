@@ -21,8 +21,3 @@ args = parser.parse_args()
 
 
 print(f'Выполнена команда {args.option}, имя файла {args.name}')
-
-
-# python main.py copy, file4.txt
-# python main.py copy, folder1
-# python main.py delete, file1.txt
