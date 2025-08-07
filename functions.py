@@ -1,32 +1,40 @@
 import os
 import shutil
 from datetime import datetime
-import structure
 from main import args
 from structure import add_structure
+
 
 path = ''
 copy_path = ''
 flag_files = False
 flag_dirs = False
 flag_main = False
-main_folder = None
+
+
+# python functions.py add_structure main
+# Добавить папки с файлами
+if args.option == 'add_structure':
+    add_structure(args.name)
+
+with open('main.txt', 'r', encoding='utf-8') as f:
+    name_main_dirs = f.read()
 
 
 # Записываю путь к файлу/папке
-for root, dirs, files in os.walk('main_folder'):
+for root, dirs, files in os.walk(name_main_dirs):
     if args.name in files:
         flag_files = True
         path = os.path.join(root, args.name)
-        copy_path = os.path.join(root, f"{args.name}_copy")
+        copy_path = os.path.join(root, f'{args.name}_copy')
 
     elif args.name in dirs:
         flag_dirs = True
         path = os.path.join(root, args.name)
 
-    elif args.name == 'main_folder':
+    elif args.name == name_main_dirs:
         flag_main = True
-        path = 'main_folder'
+        path = name_main_dirs
 
 
 # Если нет файла/папки - ошибка
@@ -47,15 +55,15 @@ if args.option == 'copy':
 
 # Удаляет файл или папку
 if args.option == 'delete':
-    for root, dirs, files in os.walk('main_folder'):
+    for root, dirs, files in os.walk(name_main_dirs):
         if args.name in files:
             os.remove(path)
 
         elif args.name in dirs:
             shutil.rmtree(path)
 
-        elif args.name == 'main_folder':
-            shutil.rmtree('main_folder')
+        elif args.name == name_main_dirs:
+            shutil.rmtree(name_main_dirs)
 
 
 # Подсчитывает количество файлов в папке (в том числе вложенные)
@@ -98,20 +106,37 @@ if args.option == 'date':
                 os.rename(f'{root}//{file}', f'{root}//{file}_{new_ftime}')
             break
 
+# Выводит размер файлов и папок
 if args.option =='analyse':
-    total_size = 0
-    size = 0
-    for root, dirs,files in os.walk(path):
+    for root, dirs, files in os.walk(path):
+        full_size = 0
+        for d in dirs:
+            d_path = os.path.join(root, d)
+            size = 0
+            for subroot, subfolder, subfiles in os.walk(d_path):
+                for f in subfiles:
+                    f_path = os.path.join(subroot, f)
+                    size += os.path.getsize(f_path)
+            full_size += size
+            print(f'- Папка: {d}: {size} байт')
 
-    #     for dir in dirs:
-    #         print(f'Папка: {dir} {os.path.getsize(f'{root}//{dir}')}')
+        for f in files:
+            f_path = os.path.join(root, f)
+            f_size = os.path.getsize(f_path)
+            full_size += f_size
+            print(f'- Файл: {f}: {f_size} байт')
+        print(f'Полный размер: {full_size} байт')
 
-        for file in files:
-            print(f'Файл: {file} {os.path.getsize(f'{root}//{file}')}')
         break
 
+
+
+
+
+
+
 # python functions.py analyse, folder1
-# python functions.py analyse, main_folder
+# python functions.py analyse, main2
 # python functions.py analyse, file4.txt
 
 # python functions.py date, folder1
@@ -122,7 +147,7 @@ if args.option =='analyse':
 # python functions.py copy, file4.txt
 # python functions.py copy, folder2
 
-# python functions.py delete, file2.txt
+# python functions.py delete, file4.txt_copy
 # python functions.py delete, folder2
 # python functions.py delete, main_folder
 
