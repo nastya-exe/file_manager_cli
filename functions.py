@@ -1,15 +1,17 @@
 import os
 import shutil
 from datetime import datetime
-
+import structure
 from main import args
+from structure import add_structure
 
 path = ''
 copy_path = ''
-new_path = ''
 flag_files = False
 flag_dirs = False
 flag_main = False
+main_folder = None
+
 
 # Записываю путь к файлу/папке
 for root, dirs, files in os.walk('main_folder'):
@@ -26,6 +28,7 @@ for root, dirs, files in os.walk('main_folder'):
         flag_main = True
         path = 'main_folder'
 
+
 # Если нет файла/папки - ошибка
 if not flag_main and not flag_dirs and not flag_files:
     raise FileNotFoundError('Файл или папка не найдены')
@@ -33,10 +36,13 @@ if not flag_main and not flag_dirs and not flag_files:
 
 # Копирует файл
 if args.option == 'copy':
-    with open(path, 'r', encoding='utf-8') as a:
-        text = a.read()
-    with open(copy_path, 'w', encoding='utf-8') as b:
-        b.write(text)
+    if flag_files:
+        with open(path, 'r', encoding='utf-8') as a:
+            text = a.read()
+        with open(copy_path, 'w', encoding='utf-8') as b:
+            b.write(text)
+    else:
+        print('Введите название файла')
 
 
 # Удаляет файл или папку
@@ -54,16 +60,19 @@ if args.option == 'delete':
 
 # Подсчитывает количество файлов в папке (в том числе вложенные)
 if args.option == 'count':
-    count_dirs = 0
-    count_files = 0
+    if flag_dirs or flag_main:
+        count_dirs = 0
+        count_files = 0
 
-    for root, dirs, files in os.walk(path):
-        for d in dirs:
-            count_dirs += 1
-        for f in files:
-            count_files += 1
+        for root, dirs, files in os.walk(path):
+            for d in dirs:
+                count_dirs += 1
+            for f in files:
+                count_files += 1
 
-    print(f'Папок: {count_dirs}, файлов: {count_files}')
+        print(f'Папок: {count_dirs}, файлов: {count_files}')
+    else:
+        print('Введите название папки')
 
 
 if args.option == 'found':
@@ -90,10 +99,20 @@ if args.option == 'date':
             break
 
 if args.option =='analyse':
-    pass
+    total_size = 0
+    size = 0
+    for root, dirs,files in os.walk(path):
 
+    #     for dir in dirs:
+    #         print(f'Папка: {dir} {os.path.getsize(f'{root}//{dir}')}')
 
+        for file in files:
+            print(f'Файл: {file} {os.path.getsize(f'{root}//{file}')}')
+        break
 
+# python functions.py analyse, folder1
+# python functions.py analyse, main_folder
+# python functions.py analyse, file4.txt
 
 # python functions.py date, folder1
 # python functions.py date, main_folder
@@ -101,6 +120,8 @@ if args.option =='analyse':
 
 
 # python functions.py copy, file4.txt
+# python functions.py copy, folder2
+
 # python functions.py delete, file2.txt
 # python functions.py delete, folder2
 # python functions.py delete, main_folder
@@ -109,4 +130,4 @@ if args.option =='analyse':
 # python functions.py count, file2.txt
 # python functions.py count, main_folder
 
-
+# python functions.py add_structure main
