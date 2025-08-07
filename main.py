@@ -1,9 +1,10 @@
 import argparse
-import os
+
 
 options = {
+    'add_structure': None,
     'copy': None,
-    'delete': lambda x: os.remove(x),
+    'delete': None,
     'count': None,
     'found': None,
     'date': None,
@@ -14,7 +15,8 @@ parser = argparse.ArgumentParser(description='Менеджер для файло
 
 parser.add_argument('option', type=str, choices=options.keys())
 parser.add_argument('name', help='Имя файла или папки')
-parser.add_argument('--recursive', '-r', action='store_true', help='')
+parser.add_argument('--recursive', '-r', action='store_true', help='''Добавляет изменения во все файлы в папке
+                                                                   на несколько уровней вложения''')
 
 
 args = parser.parse_args()
