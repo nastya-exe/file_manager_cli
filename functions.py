@@ -1,101 +1,57 @@
 import os
 import shutil
 from datetime import datetime
-from main import args
-from structure import add_structure
-
-
-path = ''
-copy_path = ''
-flag_files = False
-flag_dirs = False
-flag_main = False
-
-
-# python functions.py add_structure main
-# Добавить папки с файлами
-if args.option == 'add_structure':
-    add_structure(args.name)
-
-with open('main.txt', 'r', encoding='utf-8') as f:
-    name_main_dirs = f.read()
-
-
-# Записываю путь к файлу/папке
-for root, dirs, files in os.walk(name_main_dirs):
-    if args.name in files:
-        flag_files = True
-        path = os.path.join(root, args.name)
-        copy_path = os.path.join(root, f'{args.name}_copy')
-
-    elif args.name in dirs:
-        flag_dirs = True
-        path = os.path.join(root, args.name)
-
-    elif args.name == name_main_dirs:
-        flag_main = True
-        path = name_main_dirs
-
-
-# Если нет файла/папки - ошибка
-if not flag_main and not flag_dirs and not flag_files:
-    raise FileNotFoundError('Файл или папка не найдены')
 
 
 # Копирует файл
-if args.option == 'copy':
-    if flag_files:
-        with open(path, 'r', encoding='utf-8') as a:
-            text = a.read()
-        with open(copy_path, 'w', encoding='utf-8') as b:
-            b.write(text)
-    else:
-        print('Введите название файла')
+def copy_file(path, copy_path):
+    with open(path, 'r', encoding='utf-8') as a:
+        text = a.read()
+    with open(copy_path, 'w', encoding='utf-8') as b:
+        b.write(text)
 
 
 # Удаляет файл или папку
-if args.option == 'delete':
+def del_file_dir(name, name_main_dirs, path):
     for root, dirs, files in os.walk(name_main_dirs):
-        if args.name in files:
+        if name in files:
             os.remove(path)
 
-        elif args.name in dirs:
+        elif name in dirs:
             shutil.rmtree(path)
 
-        elif args.name == name_main_dirs:
+        elif name == name_main_dirs:
             shutil.rmtree(name_main_dirs)
 
 
-# Подсчитывает количество файлов в папке (в том числе вложенные)
-if args.option == 'count':
-    if flag_dirs or flag_main:
-        count_dirs = 0
-        count_files = 0
+ # Подсчитывает количество файлов в папке (в том числе вложенные)
+def count_file_dir(path):
+    count_dirs = 0
+    count_files = 0
 
-        for root, dirs, files in os.walk(path):
-            for d in dirs:
-                count_dirs += 1
-            for f in files:
-                count_files += 1
+    for root, dirs, files in os.walk(path):
+        for _ in dirs:
+            count_dirs += 1
+        for _ in files:
+            count_files += 1
 
-        print(f'Папок: {count_dirs}, файлов: {count_files}')
-    else:
-        print('Введите название папки')
+    print(f'Папок: {count_dirs}, файлов: {count_files}')
+    return count_dirs, count_files
 
 
-if args.option == 'found':
+def found_file():
     pass
 
 
 # В названии файла добавляет дату его создания
-if args.option == 'date':
+def date_file(path, flag_files, flag_dirs, flag_main, rec):
     ftime = os.path.getctime(path)
     new_ftime = datetime.fromtimestamp(ftime).date()
 
     if flag_files:
         os.rename(path, f'{path}_{new_ftime}')
 
-    elif (flag_dirs or flag_main) and args.recursive:
+    elif (flag_dirs or flag_main) and rec:
         for root, dirs, files in os.walk(path):
             for file in files:
                 os.rename(f'{root}//{file}', f'{root}//{file}_{new_ftime}')
@@ -107,7 +63,7 @@ if args.option == 'date':
             break
 
 # Выводит размер файлов и папок
-if args.option =='analyse':
+def analyse_dir(path):
     for root, dirs, files in os.walk(path):
         full_size = 0
         for d in dirs:
@@ -128,31 +84,4 @@ if args.option =='analyse':
         print(f'Полный размер: {full_size} байт')
 
         break
-
-
-
-
-
-
-
-# python functions.py analyse, folder1
-# python functions.py analyse, main2
-# python functions.py analyse, file4.txt
-
-# python functions.py date, folder1
-# python functions.py date, main_folder
-# python functions.py date, file4.txt
-
-
-# python functions.py copy, file4.txt
-# python functions.py copy, folder2
-
-# python functions.py delete, file4.txt_copy
-# python functions.py delete, folder2
-# python functions.py delete, main_folder
-
-# python functions.py count, folder1
-# python functions.py count, file2.txt
-# python functions.py count, main_folder
-
-# python functions.py add_structure main
+    return full_size

@@ -22,6 +22,5 @@ def add_structure(name_folder):
             with open(path, 'w', encoding='utf-8') as file:
                 file.write(f'Файл {item} в папке {folders}')
 
-
     with open('main.txt', 'w',  encoding='utf-8') as main_file:
         main_file.write(name_folder)
