@@ -1,5 +1,6 @@
 import os
 import shutil
+import re
 from datetime import datetime
 
 
@@ -39,8 +40,16 @@ def count_file_dir(path):
     return count_dirs, count_files
 
 
-def found_file():
-    pass
+# Поиск файла в папке по фильтру text
+def found_file(text, path):
+    list_file = []
+    found_text = re.compile(text)
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            if found_text.search(file):
+                print(file)
+                list_file.append(file)
+    return list_file
 
 
 # В названии файла добавляет дату его создания
@@ -64,8 +73,8 @@ def date_file(path, flag_files, flag_dirs, flag_main, rec):
 
 # Выводит размер файлов и папок
 def analyse_dir(path):
+    full_size = 0
     for root, dirs, files in os.walk(path):
-        full_size = 0
         for d in dirs:
             d_path = os.path.join(root, d)
             size = 0
@@ -74,7 +83,7 @@ def analyse_dir(path):
                     f_path = os.path.join(subroot, f)
                     size += os.path.getsize(f_path)
             full_size += size
-            print(f'- Папка: {d}: {size} байт')
+            print(f'- Папка: {d}: {size} бай+т')
 
         for f in files:
             f_path = os.path.join(root, f)
