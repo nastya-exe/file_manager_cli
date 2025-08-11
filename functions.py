@@ -25,7 +25,7 @@ def del_file_dir(name, name_main_dirs, path):
             shutil.rmtree(name_main_dirs)
 
 
- # Подсчитывает количество файлов в папке (в том числе вложенные)
+# Подсчитывает количество файлов в папке (в том числе вложенные)
 def count_file_dir(path):
     count_dirs = 0
     count_files = 0
@@ -63,13 +63,14 @@ def date_file(path, flag_files, flag_dirs, flag_main, rec):
     elif (flag_dirs or flag_main) and rec:
         for root, dirs, files in os.walk(path):
             for file in files:
-                os.rename(f'{root}//{file}', f'{root}//{file}_{new_ftime}')
+                os.rename(os.path.join(root, file), os.path.join(root, f'{file}_{new_ftime}'))
 
     elif flag_dirs or flag_main:
         for root, dirs, files in os.walk(path):
             for file in files:
-                os.rename(f'{root}//{file}', f'{root}//{file}_{new_ftime}')
+                os.rename(os.path.join(root, file), os.path.join(root, f'{file}_{new_ftime}'))
             break
+
 
 # Выводит размер файлов и папок
 def analyse_dir(path):
