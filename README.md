@@ -39,7 +39,7 @@ python manager.py copy file1.txt
 python manager.py delete folder1  
 python manager.py count main  
 python manager.py found main -f txt  
-python manager.py date main2 -r  
+python manager.py date main -r  
 python manager.py analyse main  
 
 
