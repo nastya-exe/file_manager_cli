@@ -106,7 +106,7 @@ def main(page: ft.Page):
     dir_name = ft.TextField(label='Название папки', width=200, on_change=validate_btn_dir)
     btn_dir = ft.ElevatedButton('Выбрать', icon=ft.Icons.CHECK, width=200, disabled=True, on_click=write_to_main_txt)
     btn_checkbox = ft.Container(
-        content=ft.ElevatedButton('Удалить', icon=ft.Icons.DELETE, width=200, on_click=del_file_dir_checkbox, disabled=True),
+        content=ft.ElevatedButton('Удалить', icon=ft.Icons.DELETE, width=200, on_click=del_file_dir_checkbox, disabled=False),
         visible=False, alignment=ft.alignment.center_right
     )
 
