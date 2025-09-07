@@ -4,6 +4,72 @@ import os
 import re
 from datetime import datetime
 
+# {'main\\f': Checkbox(n='content'), 'main\\folder1': Checkbox(n='content'), 'main\\folder1\\folder3': Checkbox(n='content')
+checkbox_paths = {}
+
+
+def get_file(path, text, found_file=None):
+    controls = []
+    found_text = re.compile(text)
+
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            if found_text.search(file):
+                full_path = os.path.join(root, file)
+                c = ft.Checkbox()
+                pb_for_file = ft.PopupMenuButton(
+                    content=ft.Text(" ⋮ ", size=15),
+                    items=[
+                        ft.PopupMenuItem(
+                            text="Копировать",
+                            on_click=lambda _, p=full_path: (copy_file(p, f'{p}_copy'),
+                                                             found_file() if found_file else None)
+                        ),
+                        ft.PopupMenuItem(
+                            text="Удалить",
+                            on_click=lambda _, p=full_path: (del_file_dir(p), found_file() if found_file else None)
+                        )
+                    ],
+                    menu_position=ft.PopupMenuPosition.UNDER
+                )
+
+                checkbox_paths[full_path] = c
+
+                controls.append(
+                    ft.Row(
+                        controls=[
+                            ft.Row(
+                                scroll=ft.ScrollMode.AUTO,
+                                width=300,
+                                spacing=5,
+                                controls=[
+                                    pb_for_file,
+                                    ft.Icon(ft.Icons.ATTACH_FILE_SHARP),
+                                    ft.Text(file)
+                                ]
+                            ),
+                            ft.Container(
+                                content=ft.Text(
+                                    convert_size(os.path.getsize(full_path))),
+                                alignment=ft.alignment.center,
+                                width=600),
+                            ft.Container(
+                                content=ft.Text(
+                                    datetime.fromtimestamp(os.path.getctime(full_path)).date()),
+                                width=100
+                            ),
+                            ft.Container(
+                                content=c,
+                                expand=True,
+                                alignment=ft.alignment.center_right
+                            )
+
+                        ]
+                    )
+                )
+
+    return controls
+
 
 def copy_file(path, copy_path):
     if os.path.isfile(path):
@@ -34,10 +100,6 @@ def convert_size(size):
         if size < 1024:
             return f"{size} {unit}"
         size = round(size / 1024, 2)
-
-
-# {'main\\f': Checkbox(n='content'), 'main\\folder1': Checkbox(n='content'), 'main\\folder1\\folder3': Checkbox(n='content')
-checkbox_paths = {}
 
 
 def make_panel(path, level=0, update_tree=None):

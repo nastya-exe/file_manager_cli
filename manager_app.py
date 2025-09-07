@@ -1,9 +1,9 @@
 import flet as ft
 import os
-import re
 from datetime import datetime
 
-from functions_app import get_size_dir, make_panel, del_file_dir, checkbox_paths, convert_size
+from functions_app import get_size_dir, make_panel, del_file_dir, checkbox_paths, convert_size, get_file
+from structure import add_structure
 
 
 def main(page: ft.Page):
@@ -16,17 +16,18 @@ def main(page: ft.Page):
 
     panel = ft.Column()
 
-    # Поиск файла в папке по фильтру text
     def found_file(e):
-        text = dir_name.value
-        list_file = []
-        found_text = re.compile(text)
-        for root, dirs, files in os.walk(os.getcwd()):
-            for file in files:
-                if found_text.search(file):
-                    print(file)
-                    list_file.append(file)
-        return list_file
+        panel.controls.clear()
+        table_title.visible = True
+        file_controls = get_file(os.getcwd(), dir_name.value, found_file=lambda e=None: found_file(e))
+        panel.controls.extend(file_controls)
+        if panel.controls:
+            btn_checkbox.visible = True
+            error_found.value = ''
+        else:
+            btn_checkbox.visible = False
+            error_found.value = f'Файл или папка:  {dir_name.value} не найдены'
+        page.update()
 
     def update_tree():
         make_tree(None)
@@ -35,6 +36,8 @@ def main(page: ft.Page):
     #                                                     folder_name
     # full_path_dir - ...\project\\main\\folder1\\folder3': 'folder3', ...
     def make_tree(e):
+        table_title.visible = True
+        error_found.value = ''
         folder_name = dir_name.value
         full_path_dir = {}
         for root, dirs, files in os.walk(os.getcwd()):
@@ -95,24 +98,30 @@ def main(page: ft.Page):
         page.update()
 
     def start(e):
-        flag = False
+        flag_dir = False
         for root, dirs, files in os.walk(os.getcwd()):
             if dir_name.value in dirs:
                 make_tree(e)
                 btn_checkbox.visible = True
-                flag = True
-            elif dir_name.value in files:
-                flag = True
-                found_file(None)
-                pass
+                flag_dir = True
 
-        if not flag:
-            error_found.value = f'Папка {dir_name.value} не найдена'
-        else:
-            error_found.value = ''
+        if not flag_dir:
+            found_file(None)
+
         page.update()
 
+    def validate_btn_str(e):
+        if add_str.value:
+            btn_str.disabled = False
+        page.update()
+
+    def add_struct(e):
+        add_structure(add_str.value)
+        page.update()
+
+
     table_title = ft.Row(
+        visible=False,
         controls=[
             ft.Container(content=ft.Text('Название файла'), width=570),
             ft.Container(content=ft.Text('Вес файла'), width=300),
@@ -120,8 +129,11 @@ def main(page: ft.Page):
         ]
     )
     error_found = ft.Text("", color="red")
-    dir_name = ft.TextField(label='Название папки', width=200, on_change=validate_btn_dir)
+    dir_name = ft.TextField(label='Папка или файл', width=200, on_change=validate_btn_dir)
+    add_str = ft.TextField(label='Название', width=200, on_change=validate_btn_str)
+
     btn_dir = ft.ElevatedButton('Выбрать', icon=ft.Icons.CHECK, width=200, disabled=True, on_click=start)
+    btn_str = ft.ElevatedButton('Добавить', icon=ft.Icons.CHECK, width=200, disabled=True, on_click=add_struct)
     btn_checkbox = ft.Container(
         content=ft.ElevatedButton('Удалить', icon=ft.Icons.DELETE, width=200, on_click=del_file_dir_checkbox,
                                   disabled=False),
@@ -129,9 +141,27 @@ def main(page: ft.Page):
     )
 
     page.add(ft.Column([
-        ft.Text('Введите название папки, в которой будет происходить поиск файлов'),
-        dir_name,
-        btn_dir,
+        ft.Row(
+            spacing=148,
+            controls=[
+                ft.Text('Введите название папки, либо название файла (можно частично)'),
+                ft.Text('Создать тестовую структуру папок')
+            ]
+        ),
+        ft.Row(
+            spacing=400,
+            controls=[
+                dir_name,
+                add_str
+            ]
+        ),
+        ft.Row(
+            spacing=400,
+            controls=[
+                btn_dir,
+                btn_str
+            ]
+        ),
         table_title,
         panel,
         btn_checkbox,
