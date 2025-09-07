@@ -6,7 +6,9 @@
 - structure.py - скрипт для создания структуры папок
 - manager_app.py - интерфейс
 - functions_app.py - функции
-<img width="1261" height="686" alt="Снимок экрана 2025-09-07 201953" src="https://github.com/user-attachments/assets/f13fdf8c-e422-4187-9f63-b1fa5d8fe6d0" />
+  
+<img width="1261" height="675" alt="Снимок экрана 2025-09-07 203815" src="https://github.com/user-attachments/assets/a5b8c6d3-23da-4ffe-ba22-9770de763f73" />
+
 
 ### Структура:
 В окошко 'Папка или файл' вписываем **название папки** в которой будет происходить поиск (работает только с папками 
