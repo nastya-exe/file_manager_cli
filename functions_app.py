@@ -144,7 +144,8 @@ def make_panel(path, level=0, update_tree=None):
                                         width=600
                                     ),
                                     ft.Container(
-                                        content=ft.Text(datetime.fromtimestamp(os.path.getctime(entry.path)).date()),
+                                        content=ft.Text(
+                                            datetime.fromtimestamp(os.path.getctime(path)).strftime("%d.%m.%Y")),
                                         width=100,
                                     ),
                                     ft.Container(
@@ -194,7 +195,7 @@ def make_panel(path, level=0, update_tree=None):
                             width=600,
                         ),
                         ft.Container(
-                            content=ft.Text(datetime.fromtimestamp(os.path.getctime(entry.path)).date()),
+                            content=ft.Text(datetime.fromtimestamp(os.path.getctime(path)).strftime("%d.%m.%Y")),
                             width=100,
                         ),
                         ft.Container(

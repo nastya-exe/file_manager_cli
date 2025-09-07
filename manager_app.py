@@ -36,6 +36,7 @@ def main(page: ft.Page):
     #                                                     folder_name
     # full_path_dir - ...\project\\main\\folder1\\folder3': 'folder3', ...
     def make_tree(e):
+        checkbox_paths.clear()
         table_title.visible = True
         error_found.value = ''
         folder_name = dir_name.value
@@ -71,7 +72,8 @@ def main(page: ft.Page):
                                         width=600,
                                     ),
                                     ft.Container(
-                                        content=ft.Text(datetime.fromtimestamp(os.path.getctime(path)).date()),
+                                        content=ft.Text(
+                                            datetime.fromtimestamp(os.path.getctime(path)).strftime("%d.%m.%Y")),
                                         width=100,
                                     ),
                                 ]
@@ -121,16 +123,29 @@ def main(page: ft.Page):
 
     def pick_files_result(e: ft.FilePickerResultEvent):
         if e.files:
-            first_file_name = e.files[0].name
-            dir_name.value = first_file_name
+            file_path = e.files[0].path
+            dir_name.value = e.files[0].name
             dir_name.update()
 
-            selected_files.value = (
-                ", ".join(map(lambda f: f.name, e.files)) if e.files else "Cancelled!"
-            )
-            selected_files.update()
+            start_pick_files(file_path)
 
-            start(None)
+    def start_pick_files(file_path):
+        panel.controls.clear()
+        table_title.visible = True
+
+        if os.path.exists(file_path):
+            file = get_file(
+                os.path.dirname(file_path),
+                os.path.basename(file_path),
+                found_file=lambda e=None: start_pick_files(file_path)
+            )
+            panel.controls.extend(file)
+            btn_checkbox.visible = True
+        else:
+            btn_checkbox.visible = False
+            error_found.value = f'Файл "{os.path.basename(file_path)}" не найден'
+
+        page.update()
 
     pick_files_dialog = ft.FilePicker(on_result=pick_files_result)
     selected_files = ft.Text()
@@ -151,7 +166,8 @@ def main(page: ft.Page):
 
     btn_dir = ft.ElevatedButton('Выбрать', icon=ft.Icons.CHECK, width=200, disabled=True, on_click=start)
     btn_str = ft.ElevatedButton('Добавить', icon=ft.Icons.CHECK, width=200, disabled=True, on_click=add_struct)
-    btn_pik = ft.ElevatedButton("Pick files", icon=ft.Icons.UPLOAD_FILE, on_click=lambda _: pick_files_dialog.pick_files(allow_multiple=True))
+    btn_pik = ft.ElevatedButton("Pick files", icon=ft.Icons.UPLOAD_FILE,
+                                on_click=lambda _: pick_files_dialog.pick_files(allow_multiple=True))
     btn_checkbox = ft.Container(
         content=ft.ElevatedButton('Удалить', icon=ft.Icons.DELETE, width=200, on_click=del_file_dir_checkbox,
                                   disabled=False),
