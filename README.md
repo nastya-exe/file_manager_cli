@@ -4,7 +4,7 @@
 ### Структура:
 
 - structure.py - скрипт для создания структуры папок
-- manager_app.py - интерфейс
+- manager_app.py - интерфейс (запуск от сюда)
 - functions_app.py - функции
   
 <img width="1261" height="675" alt="Снимок экрана 2025-09-07 203815" src="https://github.com/user-attachments/assets/a5b8c6d3-23da-4ffe-ba22-9770de763f73" />
