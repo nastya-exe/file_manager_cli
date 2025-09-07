@@ -119,6 +119,23 @@ def main(page: ft.Page):
         add_structure(add_str.value)
         page.update()
 
+    def pick_files_result(e: ft.FilePickerResultEvent):
+        if e.files:
+            first_file_name = e.files[0].name
+            dir_name.value = first_file_name
+            dir_name.update()
+
+            selected_files.value = (
+                ", ".join(map(lambda f: f.name, e.files)) if e.files else "Cancelled!"
+            )
+            selected_files.update()
+
+            start(None)
+
+    pick_files_dialog = ft.FilePicker(on_result=pick_files_result)
+    selected_files = ft.Text()
+
+    page.overlay.append(pick_files_dialog)
 
     table_title = ft.Row(
         visible=False,
@@ -134,6 +151,7 @@ def main(page: ft.Page):
 
     btn_dir = ft.ElevatedButton('Выбрать', icon=ft.Icons.CHECK, width=200, disabled=True, on_click=start)
     btn_str = ft.ElevatedButton('Добавить', icon=ft.Icons.CHECK, width=200, disabled=True, on_click=add_struct)
+    btn_pik = ft.ElevatedButton("Pick files", icon=ft.Icons.UPLOAD_FILE, on_click=lambda _: pick_files_dialog.pick_files(allow_multiple=True))
     btn_checkbox = ft.Container(
         content=ft.ElevatedButton('Удалить', icon=ft.Icons.DELETE, width=200, on_click=del_file_dir_checkbox,
                                   disabled=False),
@@ -149,10 +167,21 @@ def main(page: ft.Page):
             ]
         ),
         ft.Row(
-            spacing=400,
+            spacing=283,
             controls=[
-                dir_name,
-                add_str
+                ft.Row(
+                    spacing=10,
+                    controls=[
+                        dir_name,
+                        btn_pik
+                    ]
+                ),
+                ft.Row(
+                    controls=[
+                        selected_files,
+                        add_str
+                    ]
+                )
             ]
         ),
         ft.Row(
