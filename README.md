@@ -19,6 +19,8 @@
 
 <img width="1004" height="559" alt="Снимок экрана 2025-09-07 204430" src="https://github.com/user-attachments/assets/d7f55bf4-6438-47bc-9fef-f3972a62ea22" />
 
+Можно создать тестовую структуру из папок, вписав в окошко 'Название' имя будущей директории
+<img width="1260" height="662" alt="Снимок экрана 2025-09-07 212502" src="https://github.com/user-attachments/assets/9bae294f-b790-4d2c-aa51-6b25781c8bf9" />
 
 ### Основные функции:
 
