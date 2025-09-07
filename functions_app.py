@@ -5,18 +5,6 @@ import re
 from datetime import datetime
 
 
-# # Поиск файла в папке по фильтру text
-# def found_file(text, path):
-#     list_file = []
-#     found_text = re.compile(text)
-#     for root, dirs, files in os.walk(path):
-#         for file in files:
-#             if found_text.search(file):
-#                 print(file)
-#                 list_file.append(file)
-#     return list_file
-
-
 def copy_file(path, copy_path):
     if os.path.isfile(path):
         shutil.copy(path, copy_path)
@@ -33,24 +21,11 @@ def del_file_dir(path):
 
 
 def get_size_dir(path):
-    full_size = 0
+    total = 0
     for root, dirs, files in os.walk(path):
-        for d in dirs:
-            d_path = os.path.join(root, d)
-            size = 0
-            for subroot, subfolder, subfiles in os.walk(d_path):
-                for f in subfiles:
-                    f_path = os.path.join(subroot, f)
-                    size += os.path.getsize(f_path)
-            full_size += size
-
         for f in files:
-            f_path = os.path.join(root, f)
-            f_size = os.path.getsize(f_path)
-            full_size += f_size
-
-        break
-    return full_size
+            total += os.path.getsize(os.path.join(root, f))
+    return total
 
 
 def convert_size(size):
@@ -67,6 +42,7 @@ checkbox_paths = {}
 
 def make_panel(path, level=0, update_tree=None):
     controls = []
+
     for entry in os.scandir(path):
         if entry.is_dir():
             c = ft.Checkbox()
@@ -117,6 +93,7 @@ def make_panel(path, level=0, update_tree=None):
                                 ]
                             ),
                             content=ft.Column(make_panel(entry.path, level + 5, update_tree=update_tree))
+
                         )
                     ]
                 )
@@ -167,6 +144,5 @@ def make_panel(path, level=0, update_tree=None):
                     ]
                 )
             )
-
 
     return controls
